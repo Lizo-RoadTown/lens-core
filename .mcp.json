@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "loom-memory": {
+      "type": "http",
+      "url": "${LOOM_MEMORY_MCP_URL:-https://loom-agent-context.onrender.com/mcp/memory/}",
+      "headers": {
+        "Authorization": "Bearer ${TAPESTRY_MEMORY_API_KEY}"
+      }
+    },
+    "context7": {
+      "command": "npx",
+      "args": ["-y", "@upstash/context7-mcp"]
+    },
+    "github": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-github"]
+    }
+  }
+}

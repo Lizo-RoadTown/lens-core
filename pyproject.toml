@@ -1,0 +1,28 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "lens-core"
+version = "0.0.1"
+description = "The Lens — main lab repo: the shared database standard + module composition + launcher for a systems observatory."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "Apache-2.0" }
+authors = [{ name = "Liz Osborn" }]
+keywords = ["the-lens", "systems-observatory", "knowledge-mapping", "nearly-decomposable"]
+# Stdlib-only at runtime by design, so `lens-core --help` works the moment pip install completes.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0"]
+
+[project.scripts]
+lens-core = "lens_core.launch:main"
+
+[project.urls]
+Homepage = "https://github.com/Lizo-RoadTown/lens-core"
+Repository = "https://github.com/Lizo-RoadTown/lens-core"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lens_core"]
