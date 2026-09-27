@@ -1,0 +1,6 @@
+{
+  "enabledPlugins": {
+    "tapestry-discipline@tapestry": true,
+    "tapestry-patterns@tapestry": true
+  }
+}

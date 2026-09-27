@@ -24,3 +24,16 @@ Thumbs.db
 
 # Local Claude Code state
 .claude.local.md
+
+# Added by `tapestry init`
+*.env
+!.env.example
+*.py[cod]
+desktop.ini
+*~
+node_modules/
+.claude/logs/
+.claude/settings.local.json
+.mcp.json
+docs/architecture-snapshots/*
+!docs/architecture-snapshots/.gitkeep
