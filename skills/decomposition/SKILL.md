@@ -36,6 +36,18 @@ elsewhere; never modify it.
 7. **Extract.** Lift each module into its own standalone piece; document what it
    needed and what's missing as you go (capture before loss).
 
+## Launching the repos (project launch)
+
+When you create the repos for the decomposed pieces, launch each one per the
+**`decomposition-launch`** skill. At launch a repo gets ONLY: (1) how decomposition
+works, (2) what its piece is, (3) how it coordinates with the siblings on the shared
+bus, and (4) where the source is + the directive to derive its build by working the
+source itself, plus (5) the structural constraints that hold regardless. **Never hand a
+repo a substantive "what it must become" directive written by an agent that has not
+worked the source** — a repo cannot understand its piece from the outside; that
+understanding forms only by deliberately working the source. On substance, the source +
+the repo's own investigation win over any sketch.
+
 ## Identity discipline (why decompositions go wrong)
 
 Fragmented module-agents lose the whole, forget their role, and treat their task as
