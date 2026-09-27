@@ -1,37 +1,69 @@
-# lens-core — build-out plan (self-directed)
+# lens-core — directions for building yourself out
 
-This is lens-core's own plan for working itself out. Work top-down; check items off
-and append what you learned. Precedent to consult (not to copy as identity): this repo's own decomposition
-method and PROVES run log (`skills/decomposition/SKILL.md`,
-`docs/decomposition/proves/process-log.md`), the PROVES source itself
-(read-only), and the PROVES spine
-`staging_extractions → validation_decisions → core_entities`.
+This is not a spec. It orients you: how decomposition works, which piece you are,
+where the source is, and the constraints that hold. You derive what to build by
+working the source.
 
-## What lens-core must become
+## 1. You figure out what to build — from the source
 
-- [ ] **1. Launcher applies the standard.** `lens-core new` connects to
-  `LENS_DB_URL` and applies [`schema/spine.sql`](schema/spine.sql) idempotently
-  (create-if-not-exists), then reports the tables it ensured. Today `launch.py` is a
-  stub that only prints the plan — make it real. Add a `--dry-run` that prints the
-  SQL it would run without connecting (testable with no DB).
-- [ ] **2. Composition / index.** A manifest (e.g. `lens.modules.json`) listing which
-  modules are installed and how they wire onto the standard, so `lens-core` can read
-  it and a lab can "call into itself." `lens-core new --modules …` records the choice.
-- [ ] **3. Refine the neutral schema with the operator.** The names in
-  `schema/spine.sql` are placeholders (candidates/decisions/verified/sources/oversight_*).
-  Confirm/rename before first real use; keep it domain-neutral (no subject columns).
-- [ ] **4. Tests.** Schema-application idempotency (mocked/temp DB), manifest parsing,
-  `--dry-run` output. Mirror the stdlib + pytest style of `tapestry-cli`.
-- [ ] **5. Injected-config contract.** Document how a lab supplies its domain
-  specifics (candidate kinds, prompts, source registry) as config, not code —
-  the PROVES specifics (FRAMES prompt, epistemic checklist, ecosystem enums) become
-  a lab's injected configuration.
+This repo was **not** handed a specification of what to build. What this module
+actually does, and how, is derived by **deliberately working the original source**.
+A repo cannot understand its piece from the outside. No outside agent here walked the
+real build — nothing in this file was written with friction against the actual source,
+so treat nothing here as authoritative. It is a starting orientation, not a plan to
+execute.
 
-## What you own vs. don't
-Own: the schema standard, the composition/index, the launcher. Do NOT implement
-intake/review/serve/observe here — those are the sibling repos; lens-core only
-defines the shared shape they meet on.
+## 2. How decomposition works
 
-## Record as you go
-Append here: what you built, what you needed, what's missing, what you had to decide.
-Also write it to loom-memory scoped to `lens-core`. This log is capture-before-loss.
+The Lens uses a **nearly-decomposable architecture**: modules have tight coupling
+*internally* and loose coupling *across boundaries*. They meet only on well-defined
+interfaces — a shared bus (the schema) — and otherwise stay out of each other's
+internals. The full method lives in the `decomposition` skill in the lens-core repo
+(`skills/decomposition/SKILL.md`). Read it; don't restate it from memory.
+
+## 3. Your piece + the fragment map
+
+**Your piece:** lens-core holds the shared **schema/standard** (the bus), the
+**module composition**, and the **launcher**. You define the shape every module meets
+on; you do not perform intake, review, serving, or observation yourself.
+
+**The fragment map** — all the pieces and how they meet on the shared bus:
+
+- **lens-core** — defines the shared schema (the bus) + module composition + launcher.
+- **lens-ingest** — writes `candidates` + `sources`.
+- **lens-review** — reads `candidates`, writes `decisions` + `verified`.
+- **lens-serve** — reads `verified` (API + MCP).
+- **lens-observe** — reads activity, writes/serves signals.
+
+Coordinate only through the shared schema. Stay in your piece; don't absorb a sibling's
+work.
+
+## 4. The source — go work it
+
+The original source is **PROVES** (read-only) — the system The Lens was decomposed
+from. A map of it lives in lens-core `docs/decomposition/proves/process-log.md`.
+
+The parts relevant to your piece, **as places to START looking** (not a spec to copy):
+
+- PROVES `supabase/migrations/` — the spine
+  (`staging_extractions → validation_decisions → core_entities`, plus `raw_snapshots`
+  and `agent_*`).
+- The RPCs `promote_to_verified_knowledge` (migration 009) and `record_human_decision`
+  (migration 012).
+- This repo's own `docs/decomposition/` and `skills/decomposition/`.
+
+Read the actual source, understand how it really works, and derive what this module
+should be. Where any sketch here conflicts with the source or your own investigation,
+**the source and your investigation win.** Then write down what you learned.
+
+## 5. Structural constraints that hold regardless
+
+- The database connection is **injected via `LENS_DB_URL`**, never hardcoded.
+- Write only to the schema defined here in lens-core.
+- Avoid the PROVES anti-patterns: parsing LLM prose as control flow; hardcoded
+  `sys.path`; inline DB-URL.
+
+## 6. Record as you go
+
+Append here what you learned, what you needed, and what's still missing. Also write it
+to loom-memory scoped to `lens-core`. This log is capture-before-loss.

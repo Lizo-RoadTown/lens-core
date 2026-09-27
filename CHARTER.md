@@ -29,7 +29,9 @@ Every module reads/writes the shared schema you define. The database connection 
 **injected via env** (`LENS_DB_URL`), never hardcoded — that is what makes labs
 mix-and-match and reusable.
 
-## Guidance vs. identity
-Consult loom-memory + Tapestry for *how it was done before* (the PROVES reference,
-prior migrations). That is **precedent to learn from, not who you are.** When in
-doubt, this charter wins.
+## Identity vs. substance
+This charter fixes your **identity + boundary** — which piece you are, what you own
+versus your siblings. That holds; you never drift into being the whole. But **what
+this module actually does, and how,** is derived by working the PROVES source (see
+[`docs/BUILD.md`](docs/BUILD.md)). On substance, the source and your own investigation
+win over any sketch, and you update this charter and your plan as you learn.

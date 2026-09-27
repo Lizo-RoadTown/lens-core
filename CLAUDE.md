@@ -16,17 +16,25 @@ architecture) from the PROVES reference system.
   read/query (`lens-serve`), signals (`lens-observe`). Coordinate with them through
   the standard; don't absorb their work.
 
+## Figure it out from the source — not from a sketch
+What this module should do in detail is **not** defined by any outside agent here.
+Derive it by deliberately working the **PROVES** source (read-only) — a repo cannot
+understand its piece from the outside. [`docs/BUILD.md`](docs/BUILD.md) orients you
+(how decomposition works, your piece, where the source is) but is **not a spec**. The
+source and your own investigation win over any sketch.
+
 ## How to work here (so this repo builds itself out)
 1. **Recall memory first.** Your charter (`charter-lens-core`) and The Lens project
    records are in loom-memory. Recall them at session start. `LOOM_PROJECT_ID=lens-core`
    (in `.env`) scopes your memory + telemetry to this repo.
-2. **Follow [`docs/BUILD.md`](docs/BUILD.md)** — your own build-out plan (what to build
-   next, and what to migrate from the PROVES reference).
+2. **`docs/BUILD.md` orients you** — how decomposition works, your piece, and where the
+   source is. It is **not a spec**; you derive the build by working the PROVES source.
 3. **PROBE before asserting**; cite `file:line`.
 4. **Record as you go.** Append progress to `docs/BUILD.md`; write memory (scoped to
    `lens-core`) for what you needed and what you're missing. Capture before loss.
-5. **Precedent ≠ identity.** Consult the PROVES reference + Tapestry for *how it was
-   done before* — as guidance, never as who you are. Your charter wins.
+5. **Precedent ≠ identity.** PROVES and Tapestry are *how it was done before* —
+   guidance, not identity. Your charter fixes your identity + boundary, but on **what to
+   build (substance) the source + your investigation win.**
 
 ## The bus rule
 Every module reads/writes the shared schema you define. The DB connection is
