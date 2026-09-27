@@ -46,3 +46,13 @@ within The Lens. Read it first. Precedent (how PROVES/Tapestry did it before) is
 ## Status
 
 Scaffold, 2026-09-26. Neutral/open. No proprietary source data.
+
+## The Lens — related repositories
+
+Part of **The Lens** — a modular, nearly-decomposable kit for systems discovery. Each repo stands on its own; together they compose a lab (a systems observatory).
+
+- [lens-core](https://github.com/Lizo-RoadTown/lens-core) — main lab repo: shared standard + composition + launcher + the decomposition method  **(this repo)**
+- [lens-ingest](https://github.com/Lizo-RoadTown/lens-ingest) — intake: source material into staged candidate records
+- [lens-review](https://github.com/Lizo-RoadTown/lens-review) — review: human accept/reject/edit; promote to the verified library
+- [lens-serve](https://github.com/Lizo-RoadTown/lens-serve) — serve: query the verified library (API + MCP)
+- [lens-observe](https://github.com/Lizo-RoadTown/lens-observe) — observe: signals over activity (active / orphaned / degrading / blind)
