@@ -7,5 +7,5 @@ before loss). What lives here:
 - build notes / decisions / what this repo needed and what it is missing, recorded
   as the repo builds itself out.
 
-The Lens as a whole is documented in Tapestry (`docs/decomposition/`); this folder
+The Lens as a whole is kept here in this repo (`docs/decomposition/`, method in `skills/decomposition/`); this folder
 is lens-core's own record.

@@ -1,9 +1,10 @@
 # lens-core — build-out plan (self-directed)
 
 This is lens-core's own plan for working itself out. Work top-down; check items off
-and append what you learned. Precedent to consult (not to copy as identity): the
-PROVES reference inventory at
-`tapestry/docs/decomposition/proves/process-log.md`, and the PROVES spine
+and append what you learned. Precedent to consult (not to copy as identity): this repo's own decomposition
+method and PROVES run log (`skills/decomposition/SKILL.md`,
+`docs/decomposition/proves/process-log.md`), the PROVES source itself
+(read-only), and the PROVES spine
 `staging_extractions → validation_decisions → core_entities`.
 
 ## What lens-core must become
