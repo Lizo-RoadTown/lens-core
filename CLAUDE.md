@@ -52,5 +52,5 @@ This repo depends on the Tapestry discipline + patterns plugins (install once pe
 
 ## Commit discipline
 Small commits, one concern. Never `--no-verify`, never `--amend` on pushed work.
-Co-author tag: `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+Co-author tag: `Co-Authored-By: Claude <noreply@anthropic.com>`.
 Neutral/open only — no PROVES source data, preprints, or keys.
