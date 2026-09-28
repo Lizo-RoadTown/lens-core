@@ -67,3 +67,12 @@ should be. Where any sketch here conflicts with the source or your own investiga
 
 Append here what you learned, what you needed, and what's still missing. Also write it
 to loom-memory scoped to `lens-core`. This log is capture-before-loss.
+
+### 2026-09-27 — enforced decomposition log (designed, not built)
+Operator directive: record the decomposition process, lessons learned and skills in
+files, enforced by tooling rather than memory. Design agreed and recorded in
+[`plugins/lens-log/DESIGN.md`](../plugins/lens-log/DESIGN.md): per-turn `Stop` hook
+driven by a deterministic `decomposition.json` (whole in lens-core, piece per sibling),
+one-file-per-entry logs, and a scheduled GitHub Action that builds the cross-repo index.
+Also found: the local dashboard clone was 50 commits behind GitHub (fast-forwarded with
+operator approval); the dashboard half of the process-log inventory must be re-derived.
