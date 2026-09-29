@@ -122,25 +122,40 @@ date: 2026-09-27T14:05
 correction. Lessons are never inferred by the hook; they are prompted by the required
 **Lessons** section on every entry.
 
-### 3.3 The `Stop` hook (per turn)
+### 3.3 The hooks (per tool call + per turn)
 
-1. Read this repo's `decomposition.json`. No file → do nothing (repo not in the decomposition).
-2. Read the turn's tool calls from the transcript (`transcript_path` in the hook input):
-   file paths from Read/Grep/Glob/Edit/Write/Bash, plus paths recorded by the
-   `SubagentStop` hook (below).
-3. Match paths against the declared surfaces (respecting `on: read-or-write` vs `write`).
-   No match → allow the turn to end.
-4. Match → was an entry file created under `docs/log/entries/` in this turn, covering
-   those surfaces? Yes → allow. No → **block**, and tell the agent exactly which surfaces
-   were touched and which entry type(s) to write.
-5. **Loop guard:** block at most once per turn. If the hook fires again for the same turn
-   (`stop_hook_active`) and there is still no entry, allow the stop but write a
-   `docs/log/missed/<timestamp>.json` marker naming the surfaces. The index lists every
-   miss, so nothing is lost silently.
+*Revised 2026-09-29 after checking <https://code.claude.com/docs/en/hooks.md>: the
+transcript is written asynchronously and "may not yet include the current turn's most
+recent messages when a hook fires", so the hooks do not parse it. `PostToolUse` fires
+for tool calls inside subagents too, which replaces the separate `SubagentStop` step.
+`stop_hook_active` is not a loop indicator, so the hook keeps its own guard.*
 
-**Subagents:** research is often done by subagents, whose file reads do not appear in the
-main transcript. A `SubagentStop` hook records the surfaces a subagent touched into a
-per-session pending file; the main `Stop` hook includes them in step 3.
+**`PostToolUse` (every tool call, main agent and subagents):**
+
+1. Find this repo's `decomposition.json` (walking up from `cwd`). None → do nothing.
+2. Take the paths the call touched: `file_path` / `notebook_path` / `path` / Glob
+   `pattern`; for Bash/PowerShell, a source name appearing as a path segment in the
+   command text (reads only).
+3. Match them against the declared surfaces (`on: read-or-write` vs `write`).
+4. Any match → append it to a per-session touch file outside the repo
+   (`~/.claude/cache/lens-log/<session>.touches.jsonl`), and on the first touch, save
+   the list of entry files that already existed.
+
+**`Stop` (end of every turn):**
+
+1. Also match the turn's `tool_calls` from the hook input (belt and braces).
+2. Nothing pending → allow the turn to end.
+3. Pending → do new entry files (created since the first touch) cover every pending
+   surface, each with a non-empty **Lessons** section? Yes → clear and allow.
+   No → **block**, naming each surface, the entry type it needs, and the exact helper
+   command to run.
+4. **Loop guard:** block at most once per pending set. If the next stop still has no
+   entry, allow it, but write a `docs/log/missed/<timestamp>.json` marker naming the
+   surfaces. The index lists every miss, so nothing is lost silently.
+5. A malformed `decomposition.json` never blocks: the hook reports it and allows.
+
+**Known limit:** a shell command that *writes* a surface (e.g. `sed -i CHARTER.md`) is
+not detected by the hooks. The index audit (3.5) catches it from the commit.
 
 ### 3.4 Entry helper + skill
 
@@ -172,8 +187,7 @@ useful entry contains. The hook's block message points at both.
 
 ## 5. To verify during implementation
 
-- Exact `Stop` / `SubagentStop` hook input fields (`transcript_path`, `stop_hook_active`)
-  and block format, against https://code.claude.com/docs/en/hooks.md.
+- ~~Exact hook input fields and block format~~ — checked 2026-09-29, see 3.3.
 - Whether GitHub disables scheduled workflows in quiet repos, and whether the index's own
   commits count as activity. The push and manual triggers are the fallback.
 - That `enabledPlugins` in each sibling's `.claude/settings.json` can reference a
@@ -181,8 +195,9 @@ useful entry contains. The hook's block message points at both.
 
 ## 6. Build order
 
-1. `decomposition.json` for lens-core + the `Stop` hook + entry helper, enforced in
-   lens-core only. Use it on the real work (re-deriving the dashboard inventory).
-2. `SubagentStop` capture.
+1. `decomposition.json` for lens-core + the `PostToolUse` and `Stop` hooks + entry
+   helper, enforced in lens-core only. Use it on the real work (re-deriving the
+   dashboard inventory). Plan: [`PLAN.md`](PLAN.md).
+2. ~~`SubagentStop` capture~~ — folded into step 1 (`PostToolUse` covers subagents).
 3. Siblings: their `decomposition.json` + enable the plugin.
 4. Index Action with staleness stamp, consistency check and audit.
