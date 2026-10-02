@@ -1,0 +1,11 @@
+{
+  "name": "lens",
+  "owner": { "name": "Lizo-RoadTown" },
+  "plugins": [
+    {
+      "name": "lens-log",
+      "source": "./plugins/lens-log",
+      "description": "Enforced, file-based log of decomposition work for The Lens repos."
+    }
+  ]
+}

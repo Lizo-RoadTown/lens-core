@@ -1,0 +1,7 @@
+{
+  "name": "lens-log",
+  "version": "0.1.0",
+  "description": "Enforces a file-based log of decomposition work: any turn that touches a surface declared in decomposition.json must leave a log entry.",
+  "author": { "name": "Liz Osborn" },
+  "license": "Apache-2.0"
+}
