@@ -73,3 +73,16 @@ def test_source_commit_ignores_enclosing_repo(tmp_path):
     inner = outer / "PROVES_LIBRARY"
     inner.mkdir()
     assert new_entry.source_commit(str(inner)) == "unknown"
+
+
+def test_lesson_without_surfaces_flag(repo):
+    # PowerShell 5.1 drops "" arguments, so the flag must be optional
+    assert new_entry.main(["--type", "lesson", "--slug", "y", "--root", str(repo)], now=NOW) == 0
+    text = repo.joinpath(*entries.ENTRIES_DIR, "2026-09-29-1405-y.md").read_text(encoding="utf-8")
+    assert "surfaces: []" in text
+
+
+def test_source_surface_without_source_path_warns(repo, capsys):
+    assert new_entry.main(["--type", "process", "--surfaces", "source", "--slug", "z",
+                           "--root", str(repo)], now=NOW) == 0
+    assert "--source" in capsys.readouterr().err

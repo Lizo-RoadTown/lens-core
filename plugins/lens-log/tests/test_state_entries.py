@@ -26,7 +26,9 @@ def test_state_roundtrip_and_dedupe():
     state.record("s1", {"source": ["a", "b"]}, ["old.md"])
     state.record("s1", {"source": ["a"], "bus": ["x"]}, ["old.md", "new.md"])
     assert state.pending("s1") == {"source": ["a", "b"], "bus": ["x"]}
-    assert state.meta("s1") == {"entries_before": ["old.md"], "blocked": False}
+    meta = state.meta("s1")
+    assert meta["entries_before"] == ["old.md"] and meta["blocked"] is False
+    assert isinstance(meta["since"], float)
 
 
 def test_state_caps_evidence():

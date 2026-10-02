@@ -28,8 +28,15 @@ WRITE_TOOLS: dict[str, tuple[str, ...]] = {
 }
 SHELL_TOOLS = ("Bash", "PowerShell")
 
-_BEFORE = r"(?:^|[\s/\\\"'=])"
-_AFTER = r"(?=$|[\s/\\\"'])"
+# A source name in a shell command counts only in a path context (commands are
+# normalized to forward slashes first), so mentions in messages or grep patterns don't.
+_END = r"(?=$|[\s/\"';&|),])"
+_SHELL_FORMS = (
+    r"/{m}" + _END,                                                    # inside a path
+    r"(?:^|[\s\"'=(;&|]){m}/",                                         # relative path start
+    r"(?:^|[\s(;&|])(?i:cd|pushd|set-location|sl)\s+[\"']?{m}" + _END,  # change into it
+    r"(?:^|\s)-[cC]\s+[\"']?{m}" + _END,                               # git -C <dir>
+)
 
 
 class DefinitionError(ValueError):
@@ -169,7 +176,7 @@ def touches(defn: Definition, tool_name: str, tool_input: dict) -> dict[str, lis
                 continue
             for pat in s.patterns:
                 m = _marker(pat)
-                if m and re.search(_BEFORE + re.escape(m) + _AFTER, cmdn):
+                if m and any(re.search(form.format(m=re.escape(m)), cmdn) for form in _SHELL_FORMS):
                     add({s.name}, "$ " + cmd[:200])
                     break
         return hits

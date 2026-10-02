@@ -1,6 +1,7 @@
 import io
 import json
 import sys
+import time
 from datetime import datetime
 from pathlib import Path
 
@@ -30,7 +31,8 @@ x
 
 def stop(repo, **extra):
     return {"session_id": "s1", "cwd": str(repo), "hook_event_name": "Stop",
-            "stop_hook_active": False, "turn_number": 3, "tool_calls": [], **extra}
+            "stop_hook_active": False, "last_assistant_message": "done",
+            "background_tasks": [], "session_crons": [], **extra}
 
 
 def touch_source(repo, source_dir):
@@ -55,8 +57,10 @@ def test_no_definition_is_silent(tmp_path):
 def test_invalid_definition_warns_not_blocks(tmp_path):
     (tmp_path / "decomposition.json").write_text("{}", encoding="utf-8")
     out = stop_check.decide(stop(tmp_path), NOW)
-    assert "decision" not in out
-    assert "decomposition.json" in out["hookSpecificOutput"]["additionalContext"]
+    # systemMessage warns the operator without continuing the turn;
+    # additionalContext on Stop would continue it (hooks.md:2614)
+    assert set(out) == {"systemMessage"}
+    assert "decomposition.json" in out["systemMessage"]
 
 
 def test_touch_without_entry_blocks_with_command(repo, source_dir):
@@ -99,8 +103,9 @@ def test_template_lessons_not_counted(repo, source_dir):
 def test_second_stop_records_miss_and_allows(repo, source_dir):
     touch_source(repo, source_dir)
     assert stop_check.decide(stop(repo), NOW)["decision"] == "block"
-    out = stop_check.decide(stop(repo), NOW)
-    assert "decision" not in out
+    # the continuation after our block arrives with stop_hook_active=true (hooks.md:2535)
+    out = stop_check.decide(stop(repo, stop_hook_active=True), NOW)
+    assert set(out) == {"systemMessage"}
     missed = list(repo.joinpath(*entries.MISSED_DIR).glob("*.json"))
     assert len(missed) == 1
     assert "source" in json.loads(missed[0].read_text(encoding="utf-8"))["surfaces"]
@@ -108,25 +113,35 @@ def test_second_stop_records_miss_and_allows(repo, source_dir):
     assert stop_check.decide(stop(repo), NOW) is None  # next turn starts clean
 
 
-def test_tool_calls_in_stop_input_are_checked(repo):
-    calls = [{"tool_name": "Edit", "tool_use_id": "t1", "tool_input": {"file_path": str(repo / "CHARTER.md")}}]
-    out = stop_check.decide(stop(repo, tool_calls=calls), NOW)
+def test_next_turn_touches_get_their_own_block(repo, source_dir):
+    touch_source(repo, source_dir)
+    stop_check.decide(stop(repo), NOW)
+    stop_check.decide(stop(repo, stop_hook_active=True), NOW)
+    record_touch.handle({"session_id": "s1", "cwd": str(repo), "tool_name": "Edit",
+                         "tool_input": {"file_path": str(repo / "CHARTER.md")}})
+    out = stop_check.decide(stop(repo), NOW)
     assert out["decision"] == "block" and "identity (needs a decision entry)" in out["reason"]
 
 
-def test_entry_written_this_turn_counts_even_without_snapshot(repo):
-    entry_path = repo.joinpath(*entries.ENTRIES_DIR, "2026-09-29-1500-c.md")
-    write_entry(repo, entry_path.name, surfaces="identity")
-    calls = [
-        {"tool_name": "Edit", "tool_use_id": "t1", "tool_input": {"file_path": str(repo / "CHARTER.md")}},
-        {"tool_name": "Write", "tool_use_id": "t2", "tool_input": {"file_path": str(entry_path)}},
-    ]
-    assert stop_check.decide(stop(repo, tool_calls=calls), NOW) is None
-
-
-def test_subagent_frontmatter_stop_ignored(repo, source_dir):
+def test_first_block_not_skipped_when_another_hook_continued(repo, source_dir):
     touch_source(repo, source_dir)
-    assert stop_check.decide(stop(repo, stop_hook_active=True), NOW) is None
+    assert stop_check.decide(stop(repo, stop_hook_active=True), NOW)["decision"] == "block"
+
+
+def test_entry_filled_in_after_first_touch_counts(repo, source_dir):
+    # created (e.g. by the helper) before the touch, Lessons filled in afterwards
+    write_entry(repo, "2026-09-29-1500-x.md", lessons="<!-- required -->")
+    touch_source(repo, source_dir)
+    time.sleep(0.05)
+    write_entry(repo, "2026-09-29-1500-x.md", lessons="The clone was stale.")
+    assert stop_check.decide(stop(repo), NOW) is None
+
+
+def test_block_without_local_source_path_asks_for_it(repo):
+    record_touch.handle({"session_id": "s1", "cwd": str(repo), "tool_name": "Bash",
+                         "tool_input": {"command": "git -C ../PROVES_LIBRARY log -1"}})
+    reason = stop_check.decide(stop(repo), NOW)["reason"]
+    assert '--source "<local folder of each source repo read>"' in reason
 
 
 def test_main_prints_json_and_exits_zero(repo, source_dir, monkeypatch, capsys):

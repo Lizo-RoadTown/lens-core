@@ -106,3 +106,25 @@ def test_source_root(repo, source_dir):
     root = d.source_root(defn, str(source_dir / "supabase" / "x.sql"))
     assert d.norm(root) == d.norm(str(source_dir))
     assert d.source_root(defn, str(repo / "CHARTER.md")) is None
+
+
+@pytest.mark.parametrize("cmd", [
+    'grep -rn "PROVES_LIBRARY" docs/',
+    'git commit -m "notes on PROVES_LIBRARY layout"',
+    "echo PROVES_LIBRARY",
+])
+def test_shell_mention_without_path_is_not_a_touch(repo, cmd):
+    assert d.touches(d.load(repo), "Bash", {"command": cmd}) == {}
+
+
+@pytest.mark.parametrize("cmd", [
+    r"cd C:\Users\Liz\PROVES_LIBRARY; git log",
+    "(cd ../PROVES_LIBRARY&&ls)",
+    "cat /c/Users/Liz/PROVES_LIBRARY|head",
+    "cd PROVES_LIBRARY",
+    "Set-Location 'PROVES_LIBRARY'",
+    "git -C PROVES_LIBRARY log -1",
+    "ls PROVES_LIBRARY/supabase",
+])
+def test_shell_path_forms_are_touches(repo, cmd):
+    assert list(d.touches(d.load(repo), "PowerShell", {"command": cmd})) == ["source"]

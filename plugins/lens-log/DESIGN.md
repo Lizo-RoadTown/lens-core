@@ -1,6 +1,7 @@
 # Enforced decomposition log — design
 
-**Status:** design agreed with the operator, 2026-09-27. Not yet built.
+**Status:** design agreed with the operator, 2026-09-27. Build step 1 built 2026-10-02 on
+branch `lens-log` (not yet merged or installed).
 **Kind:** dev-tooling (plugin, hooks, CI, docs). Nothing here runs inside a lab.
 **Names are placeholders** until the operator names them: `lens-log` (the plugin),
 `decomposition.json` (the definition file).
@@ -46,7 +47,7 @@ lens-core/
 ├── plugins/lens-log/
 │   ├── DESIGN.md                 # this file
 │   ├── .claude-plugin/plugin.json
-│   ├── hooks/hooks.json          # Stop + SubagentStop
+│   ├── hooks/hooks.json          # PostToolUse + Stop
 │   ├── scripts/                  # hook logic, entry helper, index builder (stdlib Python)
 │   └── skills/log-entry/SKILL.md # how to write a good entry
 ├── docs/log/
@@ -127,32 +128,39 @@ correction. Lessons are never inferred by the hook; they are prompted by the req
 *Revised 2026-09-29 after checking <https://code.claude.com/docs/en/hooks.md>: the
 transcript is written asynchronously and "may not yet include the current turn's most
 recent messages when a hook fires", so the hooks do not parse it. `PostToolUse` fires
-for tool calls inside subagents too, which replaces the separate `SubagentStop` step.
-`stop_hook_active` is not a loop indicator, so the hook keeps its own guard.*
+for tool calls inside subagents too, which replaces the separate `SubagentStop` step.*
+
+*Corrected 2026-10-02 against the raw doc text (an earlier summarized fetch had invented
+fields): the Stop input is `stop_hook_active`, `last_assistant_message`,
+`background_tasks`, `session_crons` — no `tool_calls` (that is `PostToolBatch`).
+`stop_hook_active` is true whenever a stop hook continued the turn, including another
+plugin's, so the hook keeps its own per-pending-set flag as the loop guard. On Stop,
+`additionalContext` also continues the conversation; warnings use `systemMessage`.*
 
 **`PostToolUse` (every tool call, main agent and subagents):**
 
 1. Find this repo's `decomposition.json` (walking up from `cwd`). None → do nothing.
 2. Take the paths the call touched: `file_path` / `notebook_path` / `path` / Glob
-   `pattern`; for Bash/PowerShell, a source name appearing as a path segment in the
-   command text (reads only).
+   `pattern`; for Bash/PowerShell, a source name in a path context in the command text
+   (inside a path, starting a relative path, or after `cd`/`Set-Location`/`git -C`),
+   counted as a read only. A bare mention (commit message, grep pattern) is not a touch.
 3. Match them against the declared surfaces (`on: read-or-write` vs `write`).
 4. Any match → append it to a per-session touch file outside the repo
    (`~/.claude/cache/lens-log/<session>.touches.jsonl`), and on the first touch, save
-   the list of entry files that already existed.
+   the list of entry files that already existed and the time of that first touch.
 
 **`Stop` (end of every turn):**
 
-1. Also match the turn's `tool_calls` from the hook input (belt and braces).
-2. Nothing pending → allow the turn to end.
-3. Pending → do new entry files (created since the first touch) cover every pending
+1. Nothing pending → allow the turn to end.
+2. Pending → do entry files created or changed since the first touch cover every pending
    surface, each with a non-empty **Lessons** section? Yes → clear and allow.
    No → **block**, naming each surface, the entry type it needs, and the exact helper
    command to run.
-4. **Loop guard:** block at most once per pending set. If the next stop still has no
+3. **Loop guard:** block at most once per pending set. If the next stop still has no
    entry, allow it, but write a `docs/log/missed/<timestamp>.json` marker naming the
    surfaces. The index lists every miss, so nothing is lost silently.
-5. A malformed `decomposition.json` never blocks: the hook reports it and allows.
+4. A malformed `decomposition.json` never blocks: the hook warns the operator
+   (`systemMessage`) and allows the turn to end.
 
 **Known limit:** a shell command that *writes* a surface (e.g. `sed -i CHARTER.md`) is
 not detected by the hooks. The index audit (3.5) catches it from the commit.
@@ -187,7 +195,7 @@ useful entry contains. The hook's block message points at both.
 
 ## 5. To verify during implementation
 
-- ~~Exact hook input fields and block format~~ — checked 2026-09-29, see 3.3.
+- ~~Exact hook input fields and block format~~ — checked against the raw doc 2026-10-02, see 3.3.
 - Whether GitHub disables scheduled workflows in quiet repos, and whether the index's own
   commits count as activity. The push and manual triggers are the fallback.
 - That `enabledPlugins` in each sibling's `.claude/settings.json` can reference a

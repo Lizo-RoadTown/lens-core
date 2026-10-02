@@ -23,4 +23,4 @@ Entry types: `process` (what was done to or learned from the source or module co
 `skill` (a skill was created or changed), `lesson` (a standalone lesson).
 
 To record a lesson with no surface touched:
-`python <plugin>/scripts/new_entry.py --type lesson --surfaces "" --slug <slug> --title "<lesson>"`
+`python <plugin>/scripts/new_entry.py --type lesson --slug <slug> --title "<lesson>"`

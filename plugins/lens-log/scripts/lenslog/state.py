@@ -8,6 +8,7 @@ from __future__ import annotations
 import json
 import os
 import re
+import time
 from pathlib import Path
 
 MAX_EVIDENCE = 10
@@ -47,7 +48,8 @@ def _write_meta(session_id: str, data: dict) -> None:
 
 def record(session_id: str, hits: dict[str, list[str]], entries_now: list[str]) -> None:
     if meta(session_id) is None:
-        _write_meta(session_id, {"entries_before": list(entries_now), "blocked": False})
+        _write_meta(session_id, {"entries_before": list(entries_now), "blocked": False,
+                                 "since": time.time()})
     path = _touches(session_id)
     path.parent.mkdir(parents=True, exist_ok=True)
     with path.open("a", encoding="utf-8") as f:

@@ -67,7 +67,7 @@ def _fail(msg: str) -> int:
 def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
     p = argparse.ArgumentParser(description="Create a decomposition log entry.")
     p.add_argument("--type", required=True)
-    p.add_argument("--surfaces", required=True, help="comma-separated surface names ('' for none)")
+    p.add_argument("--surfaces", default="", help="comma-separated surface names (omit for none)")
     p.add_argument("--slug", required=True)
     p.add_argument("--title", default=None)
     p.add_argument("--source", action="append", default=[], help="local folder of a source repo that was read")
@@ -90,6 +90,12 @@ def main(argv: list[str] | None = None, now: datetime | None = None) -> int:
         return _fail(f"unknown surface(s) {unknown}; declared: {sorted(known)}")
     if not SLUG.match(args.slug):
         return _fail("--slug must be lowercase letters, digits and dashes")
+
+    reads_source = any(set(defn.surface(s).patterns) & set(defn.sources) for s in surfaces)
+    if reads_source and not args.source:
+        print("[lens-log] warning: a source surface was named but no --source folder was given, "
+              "so the entry cannot record which source commit was read. Pass --source <local folder>.",
+              file=sys.stderr)
 
     now = now or datetime.now()
     commits = {Path(src).name: source_commit(src) for src in args.source}

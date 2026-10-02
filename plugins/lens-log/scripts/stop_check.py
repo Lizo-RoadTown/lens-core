@@ -17,8 +17,10 @@ from lenslog import definition, entries, state  # noqa: E402
 HELPER = Path(__file__).resolve().parent / "new_entry.py"
 
 
-def _context(text: str) -> dict:
-    return {"hookSpecificOutput": {"hookEventName": "Stop", "additionalContext": text}}
+def _warn(text: str) -> dict:
+    # systemMessage is shown to the operator and lets the turn end; additionalContext
+    # on Stop would continue the conversation (hooks.md:2614).
+    return {"systemMessage": text}
 
 
 def block_message(defn, missing: dict[str, list[str]], rejected: list[str]) -> str:
@@ -34,8 +36,13 @@ def block_message(defn, missing: dict[str, list[str]], rejected: list[str]) -> s
                      + ", ".join(rejected))
     lines.append("Create the entry with:")
     for entry_type, names in sorted(by_type.items()):
-        roots = sorted({r for n in names for e in missing[n] if (r := definition.source_root(defn, e))})
+        roots = sorted({r for n in names for e in missing[n]
+                        if (r := definition.source_root(defn, e)) and "*" not in r})
         sources = "".join(f' --source "{r}"' for r in roots)
+        reads_source = any(set(defn.surface(n).patterns) & set(defn.sources) for n in names)
+        if reads_source and not roots:
+            sources = ' --source "<local folder of each source repo read>"'
+
         lines.append(f'  python "{HELPER}" --type {entry_type} --surfaces {",".join(names)} '
                      f'--slug <short-slug> --title "<what this was>"{sources}')
     lines.append("Then fill in 'What was done', 'What was found / decided' and 'Lessons'. "
@@ -43,30 +50,27 @@ def block_message(defn, missing: dict[str, list[str]], rejected: list[str]) -> s
     return "\n".join(lines)
 
 
+def _changed_since(root: Path, name: str, since: float | None) -> bool:
+    if since is None:
+        return False
+    try:
+        return Path(root).joinpath(*entries.ENTRIES_DIR, name).stat().st_mtime > since
+    except OSError:
+        return False
+
+
 def decide(data: dict, now: datetime | None = None) -> dict | None:
-    if data.get("stop_hook_active"):
-        return None
+    # Stop input carries stop_hook_active, last_assistant_message, background_tasks and
+    # session_crons; it has no tool_calls (hooks.md:2535). Touches come from PostToolUse.
     root = definition.find_root(Path(data.get("cwd") or "."))
     if root is None:
         return None
     try:
         defn = definition.load(root)
     except definition.DefinitionError as e:
-        return _context(f"[lens-log] decomposition.json is invalid, so logging is not enforced: {e}")
+        return _warn(f"[lens-log] decomposition.json is invalid, so logging is not enforced: {e}")
 
     sid = data.get("session_id", "")
-    entries_dir = definition.norm(str(Path(root).joinpath(*entries.ENTRIES_DIR))).rstrip("/") + "/"
-    written_now: set[str] = set()
-    for call in data.get("tool_calls") or []:
-        name, tool_input = call.get("tool_name", ""), call.get("tool_input") or {}
-        hits = definition.touches(defn, name, tool_input)
-        if hits:
-            state.record(sid, hits, entries.list_entries(root))
-        for key in definition.WRITE_TOOLS.get(name, ()):
-            value = tool_input.get(key)
-            if isinstance(value, str) and definition.norm(str(Path(value).resolve())).startswith(entries_dir):
-                written_now.add(Path(value).name)
-
     known = {s.name for s in defn.surfaces}
     pending = {k: v for k, v in state.pending(sid).items() if k in known}
     if not pending:
@@ -74,17 +78,20 @@ def decide(data: dict, now: datetime | None = None) -> dict | None:
         return None
     meta = state.meta(sid) or {}
     before = set(meta.get("entries_before") or [])
-    new = {n for n in entries.list_entries(root) if n not in before} | written_now
+    since = meta.get("since")
+    new = {n for n in entries.list_entries(root) if n not in before or _changed_since(root, n, since)}
     covered, rejected = entries.coverage(root, new)
     missing = {k: v for k, v in pending.items() if k not in covered}
     if not missing:
         state.clear(sid)
         return None
+    # Our own flag is the guard: stop_hook_active is also true when another plugin's
+    # Stop hook continued the turn, and our first block must not be skipped then.
     if meta.get("blocked"):
         path = entries.write_missed(root, missing, sid, now or datetime.now())
         state.clear(sid)
         rel = path.relative_to(root).as_posix()
-        return _context(f"[lens-log] No log entry was written; recorded a miss at {rel}. The index will list it.")
+        return _warn(f"[lens-log] No log entry was written; recorded a miss at {rel}. The index will list it.")
     state.set_blocked(sid)
     return {"decision": "block", "reason": block_message(defn, missing, rejected)}
 
