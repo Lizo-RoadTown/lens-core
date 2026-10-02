@@ -1773,7 +1773,9 @@ No code. This proves the hooks fire in a real Claude Code session.
 
 - [ ] **Step 1: Operator approves the push.** `git push origin main` (the marketplace is read from GitHub). Do not push without the operator's go-ahead.
 - [ ] **Step 2: Check the settings format** against <https://code.claude.com/docs/en/plugin-marketplaces.md> and <https://code.claude.com/docs/en/settings.md> (`extraKnownMarketplaces`, `enabledPlugins`). Fix `.claude/settings.json` if the docs differ; commit.
-- [ ] **Step 3: Operator installs** in the lens-core window: `/plugin marketplace add Lizo-RoadTown/lens-core`, then `/plugin install lens-log@lens`, then reload the window.
+- [ ] **Step 3: Operator installs** in the lens-core window: `/plugin marketplace update lizo-skills`, then `/plugin install lens-log@lizo-skills --scope project`, then reload the window.
+
+> **Changed 2026-10-02 (operator):** lens-core no longer hosts its own `lens` marketplace (Task 6's `.claude-plugin/marketplace.json` was removed). The plugin is listed in `lizo-skills` with a `git-subdir` source and enabled per project as `lens-log@lizo-skills`. See DESIGN.md D7.
 - [ ] **Step 4: Live check.** In a new turn, read one file under the PROVES dashboard (e.g. `src/hooks/useLibrary.ts`) and finish the turn. Expected: the Stop hook blocks with the `[lens-log]` message and a ready `new_entry.py` command.
 - [ ] **Step 5: Write the first real entry** with that command, fill all three sections, finish the turn. Expected: the turn ends normally. Commit the entry.
 - [ ] **Step 6: Subagent check.** Ask an Explore subagent to read one PROVES file; finish the turn. Expected: the block names that file. Write the entry; commit.

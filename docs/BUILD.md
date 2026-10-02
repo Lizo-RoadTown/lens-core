@@ -80,5 +80,6 @@ operator approval); the dashboard half of the process-log inventory must be re-d
 ### 2026-10-02 — lens-log built (step 1)
 `plugins/lens-log/` implements the PostToolUse + Stop hooks, the entry helper and the
 `log-entry` skill; lens-core now has its own `decomposition.json` and `docs/log/entries/`.
-Enforcement starts once the plugin is installed from the `lens` marketplace (see
-`plugins/lens-log/PLAN.md` Task 8).
+Distribution (operator, 2026-10-02): the code stays here; it is listed in the operator's
+`lizo-skills` marketplace (git-subdir source) and enabled per project in
+`.claude/settings.json` as `lens-log@lizo-skills`.

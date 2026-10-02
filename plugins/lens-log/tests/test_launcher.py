@@ -38,5 +38,13 @@ def test_hooks_json_points_at_existing_scripts():
 def test_manifests_are_valid():
     plugin = json.loads((PLUGIN / ".claude-plugin" / "plugin.json").read_text(encoding="utf-8"))
     assert plugin["name"] == "lens-log"
-    market = json.loads((PLUGIN.parents[1] / ".claude-plugin" / "marketplace.json").read_text(encoding="utf-8"))
-    assert {"name": "lens-log", "source": "./plugins/lens-log"}.items() <= market["plugins"][0].items()
+
+
+def test_listed_in_lizo_skills_only_and_enabled_per_project():
+    root = PLUGIN.parents[1]
+    # one listing only: the lizo-skills marketplace points here with git-subdir
+    assert not (root / ".claude-plugin" / "marketplace.json").exists()
+    settings = json.loads((root / ".claude" / "settings.json").read_text(encoding="utf-8"))
+    assert settings["enabledPlugins"]["lens-log@lizo-skills"] is True
+    market = settings["extraKnownMarketplaces"]["lizo-skills"]["source"]
+    assert market == {"source": "github", "repo": "Lizo-RoadTown/claude-skills-marketplace"}

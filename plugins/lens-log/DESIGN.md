@@ -35,7 +35,7 @@ came out of it, without querying memory.
 | D4 | The hook is **deterministic**: it fires only when a turn touches a surface declared in the decomposition definition. It never judges wording. | Only fire when necessary; no guessing. |
 | D5 | What "the decomposition" is lives in **one specialized file**, `decomposition.json`. Redefining the decomposition = editing that file. Editing it is itself a logged decision. | Hook code never changes when the architecture changes. |
 | D6 | **Two layers:** lens-core's file defines the whole; each sibling's file defines only its piece. Each hook reads only its own repo's file. | Mirrors charter-per-repo + fragment map. Hooks stay inside their own repo, fast, offline. |
-| D7 | The plugin lives **in lens-core** (`plugins/lens-log/`); lens-core acts as the plugin marketplace. | The log format and the definition file are part of the shared standard, which lens-core holds. Not Tapestry: The Lens is independent. |
+| D7 | The plugin's code lives **in lens-core** (`plugins/lens-log/`). It is listed in the operator's `lizo-skills` marketplace (`Lizo-RoadTown/claude-skills-marketplace`) with a `git-subdir` source pointing here, and enabled **per project** in each Lens repo's `.claude/settings.json`, not machine-wide. | The log format and the definition file are part of the shared standard, which lens-core holds. One listing only (a plugin name in two marketplaces fails to install). Not Tapestry: The Lens is independent. Revised 2026-10-02 by the operator. |
 | D8 | **Reading** the PROVES source counts as touching the source surface. | Research passes change no files but are the core of the process. |
 
 ## 3. The pieces
@@ -43,7 +43,6 @@ came out of it, without querying memory.
 ```text
 lens-core/
 ├── decomposition.json            # the WHOLE: sources, module map, bus, lens-core's own surfaces
-├── .claude-plugin/marketplace.json
 ├── plugins/lens-log/
 │   ├── DESIGN.md                 # this file
 │   ├── .claude-plugin/plugin.json
