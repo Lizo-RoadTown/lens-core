@@ -76,3 +76,9 @@ driven by a deterministic `decomposition.json` (whole in lens-core, piece per si
 one-file-per-entry logs, and a scheduled GitHub Action that builds the cross-repo index.
 Also found: the local dashboard clone was 50 commits behind GitHub (fast-forwarded with
 operator approval); the dashboard half of the process-log inventory must be re-derived.
+
+### 2026-10-02 — lens-log built (step 1)
+`plugins/lens-log/` implements the PostToolUse + Stop hooks, the entry helper and the
+`log-entry` skill; lens-core now has its own `decomposition.json` and `docs/log/entries/`.
+Enforcement starts once the plugin is installed from the `lens` marketplace (see
+`plugins/lens-log/PLAN.md` Task 8).

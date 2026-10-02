@@ -1,6 +1,12 @@
 {
+  "extraKnownMarketplaces": {
+    "lens": {
+      "source": { "source": "github", "repo": "Lizo-RoadTown/lens-core" }
+    }
+  },
   "enabledPlugins": {
     "tapestry-discipline@tapestry": true,
-    "tapestry-patterns@tapestry": true
+    "tapestry-patterns@tapestry": true,
+    "lens-log@lens": true
   }
 }
