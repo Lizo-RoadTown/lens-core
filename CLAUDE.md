@@ -30,7 +30,10 @@ source and your own investigation win over any sketch.
 2. **`docs/BUILD.md` orients you** — how decomposition works, your piece, and where the
    source is. It is **not a spec**; you derive the build by working the PROVES source.
 3. **PROBE before asserting**; cite `file:line`.
-4. **Record as you go.** Append progress to `docs/BUILD.md`; write memory (scoped to
+4. **Record as you go.** Progress goes in a log entry under `docs/log/entries/` (the
+   lens-log plugin enforces it), not in `docs/BUILD.md`. It is a **decision** entry if it
+   changes what this repo is or how it connects (identity, boundary, the standard, the
+   decomposition definition); otherwise it is progress. Also write memory (scoped to
    `lens-core`) for what you needed and what you're missing. Capture before loss.
 5. **Precedent ≠ identity.** PROVES and Tapestry are *how it was done before* —
    guidance, not identity. Your charter fixes your identity + boundary, but on **what to

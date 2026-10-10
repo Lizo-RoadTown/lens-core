@@ -65,21 +65,12 @@ should be. Where any sketch here conflicts with the source or your own investiga
 
 ## 6. Record as you go
 
-Append here what you learned, what you needed, and what's still missing. Also write it
-to loom-memory scoped to `lens-core`. This log is capture-before-loss.
+Progress is recorded as **log entries** in [`docs/log/entries/`](log/entries/), not in
+this file. The lens-log plugin enforces it: a turn that touches a surface declared in
+[`decomposition.json`](../decomposition.json) cannot end until an entry covers it.
 
-### 2026-09-27 — enforced decomposition log (designed, not built)
-Operator directive: record the decomposition process, lessons learned and skills in
-files, enforced by tooling rather than memory. Design agreed and recorded in
-[`plugins/lens-log/DESIGN.md`](../plugins/lens-log/DESIGN.md): per-turn `Stop` hook
-driven by a deterministic `decomposition.json` (whole in lens-core, piece per sibling),
-one-file-per-entry logs, and a scheduled GitHub Action that builds the cross-repo index.
-Also found: the local dashboard clone was 50 commits behind GitHub (fast-forwarded with
-operator approval); the dashboard half of the process-log inventory must be re-derived.
-
-### 2026-10-02 — lens-log built (step 1)
-`plugins/lens-log/` implements the PostToolUse + Stop hooks, the entry helper and the
-`log-entry` skill; lens-core now has its own `decomposition.json` and `docs/log/entries/`.
-Distribution (operator, 2026-10-02): the code stays here; it is listed in the operator's
-`lizo-skills` marketplace (git-subdir source) and enabled per project in
-`.claude/settings.json` as `lens-log@lizo-skills`.
+Deciding factor for the entry type: it is a **decision** if it changes what this repo
+*is* or how it *connects* (identity, boundary, the shared standard, the decomposition
+definition). Everything else (what was done, found, or built) is **progress**, a
+`process` entry. This file holds orientation only, so editing it is a decision.
+Also write what you needed and what is missing to loom-memory scoped to `lens-core`.

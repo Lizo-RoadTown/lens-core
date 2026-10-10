@@ -37,6 +37,8 @@ came out of it, without querying memory.
 | D6 | **Two layers:** lens-core's file defines the whole; each sibling's file defines only its piece. Each hook reads only its own repo's file. | Mirrors charter-per-repo + fragment map. Hooks stay inside their own repo, fast, offline. |
 | D7 | The plugin's code lives **in lens-core** (`plugins/lens-log/`). It is listed in the operator's `lizo-skills` marketplace (`Lizo-RoadTown/claude-skills-marketplace`) with a `git-subdir` source pointing here, and enabled **per project** in each Lens repo's `.claude/settings.json`, not machine-wide. | The log format and the definition file are part of the shared standard, which lens-core holds. One listing only (a plugin name in two marketplaces fails to install). Not Tapestry: The Lens is independent. Revised 2026-10-02 by the operator. |
 | D8 | **Reading** the PROVES source counts as touching the source surface. | Research passes change no files but are the core of the process. |
+| D9 | **Deciding factor:** an entry is a `decision` if the change alters what the repo *is* or how it *connects* (identity, boundary, shared standard, decomposition definition); everything else is progress (`process`). Orientation files (CHARTER, CLAUDE.md, BUILD.md) hold no progress notes, so editing them is always a decision; progress lives only in the log. | Operator, 2026-10-10: not every progress note is a decision. Path-based triggers stay deterministic because files are split by kind. |
+| D10 | Plugins get their own surface, **`tooling`** (`plugins/**`, `process` entries), separate from `module` (`src/**`). | Operator, 2026-10-10: plugins are their own thing but part of the work, so they are logged and distinguishable. |
 
 ## 3. The pieces
 
@@ -81,7 +83,8 @@ lens-ingest/ (and each sibling)
     {"name": "identity", "paths": ["CHARTER.md", "CLAUDE.md", "docs/BUILD.md"], "on": "write", "entry": "decision"},
     {"name": "definition","paths": ["decomposition.json"],               "on": "write",         "entry": "decision"},
     {"name": "skills",   "paths": ["skills/**", "SKILLS.md", "plugins/**/skills/**"], "on": "write", "entry": "skill"},
-    {"name": "module",   "paths": ["src/**"],                            "on": "write",         "entry": "process"}
+    {"name": "module",   "paths": ["src/**"],                            "on": "write",         "entry": "process"},
+    {"name": "tooling",  "paths": ["plugins/**"],                        "on": "write",         "entry": "process"}
   ]
 }
 ```

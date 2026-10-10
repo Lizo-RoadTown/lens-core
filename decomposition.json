@@ -16,6 +16,7 @@
     {"name": "identity", "paths": ["CHARTER.md", "CLAUDE.md", "docs/BUILD.md"], "on": "write", "entry": "decision"},
     {"name": "definition", "paths": ["decomposition.json"], "on": "write", "entry": "decision"},
     {"name": "skills", "paths": ["skills/**", "SKILLS.md", "plugins/**/skills/**"], "on": "write", "entry": "skill"},
-    {"name": "module", "paths": ["src/**", "plugins/**"], "on": "write", "entry": "process"}
+    {"name": "module", "paths": ["src/**"], "on": "write", "entry": "process"},
+    {"name": "tooling", "paths": ["plugins/**"], "on": "write", "entry": "process"}
   ]
 }

@@ -15,7 +15,9 @@ def test_lens_core_definition():
     assert m(str(ROOT / "CHARTER.md")) == {"identity"}
     assert m(str(ROOT / "decomposition.json")) == {"definition"}
     assert m(str(ROOT / "skills" / "decomposition" / "SKILL.md")) == {"skills"}
-    assert m(str(ROOT / "plugins" / "lens-log" / "skills" / "log-entry" / "SKILL.md")) == {"skills", "module"}
+    assert m(str(ROOT / "plugins" / "lens-log" / "skills" / "log-entry" / "SKILL.md")) == {"skills", "tooling"}
+    assert m(str(ROOT / "plugins" / "lens-log" / "scripts" / "stop_check.py")) == {"tooling"}
+    assert m(str(ROOT / "docs" / "BUILD.md")) == {"identity"}
     assert m(str(ROOT / "src" / "lens_core" / "launch.py")) == {"module"}
     assert m(str(ROOT / "README.md")) == set()
     assert m(str(ROOT / "docs" / "log" / "entries" / "x.md")) == set()
