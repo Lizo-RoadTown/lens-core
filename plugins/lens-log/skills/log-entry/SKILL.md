@@ -18,9 +18,15 @@ The log is the record of the decomposition. Memory may point at it; it does not 
      section does not count.
 3. One entry may cover several surfaces touched in the same turn. Keep it short and factual.
 
-Entry types: `process` (what was done to or learned from the source or module code),
-`decision` (a change to the standard, identity, or the decomposition definition),
-`skill` (a skill was created or changed), `lesson` (a standalone lesson).
+Entry types: `process` (what was done to or learned from the source, module code or
+tooling), `decision` (a change to the standard, identity, or the decomposition
+definition), `skill` (a skill was created or changed), `lesson` (a standalone lesson).
+
+**Deciding factor — decision or progress?** It is a **decision** if it changes what the
+repo *is* or how it *connects*: its identity, its boundary, the shared standard, or the
+decomposition definition. Everything else (what was done, found, or built) is
+**progress** and gets a `process` entry. Progress is never appended to orientation files
+like `docs/BUILD.md`; it goes in the log.
 
 To record a lesson with no surface touched:
 `python <plugin>/scripts/new_entry.py --type lesson --slug <slug> --title "<lesson>"`
