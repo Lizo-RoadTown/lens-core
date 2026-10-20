@@ -23,18 +23,48 @@ elsewhere; never modify it.
 1. **Orient to the whole.** State what the system is and the end goal, so no agent
    mistakes its slice for the whole. Write it down first.
 2. **Read-only inventory.** Per repo/area, enumerate candidate modules.
+   - **Source freshness first:** record the commit of every source read and compare it
+     to the remote; a stale source invalidates the pass.
+   - **Two status axes per module:** reachability (mounted / unmounted / imported by
+     nothing) and version status (working / in-progress / superseded / broken). Keep
+     working + in-progress; drop superseded versions and broken old ones.
+   - **Scan for committed secrets** on this first full read.
+   - **Label every module:** what it does, its stage and usual order in a working run,
+     and where it sits relative to the others.
 3. **Interface mapping.** For each module, the interface it depends on — exactly what
    it touches (DB tables / RPCs / MCP calls / imports / APIs). A module's real
-   interface is *what it touches*, nothing more.
+   interface is *what it touches*, nothing more. **Verify against the running system:**
+   check the schema folder against what the code calls and, if available, a
+   live-schema export; they can diverge.
 4. **Bond-strength seams.** Cluster tight-internal / loose-across. Where coupling is
    tangled and no clean seam exists, **define** the interface (name the interface +
    the flow across it) so the piece can stand alone.
+   - **Cross-cutting scan:** look explicitly for concerns that touch every stage
+     (access/tenancy, governance/oversight, configuration, observability, secrets) and
+     classify each as a module, part of the standard, or a constraint on the bus.
+   - **Modules that govern the bus** (row security, scoping columns) add a *contract* to
+     the standard, not just tables.
 5. **Name (operator-led).** Placeholder neutral labels until the operator names them.
 6. **Repo-tree logic.** Each module becomes a drop-in unit = its code + a manifest of
    what it reads/writes on the shared bus + an *injected* connection (no hardcoded
    backend). A self-locating index lets the tree "call into itself."
+   - **Home check before creating repos:** every kept module is assigned to exactly one
+     repo. Don't draw repos from pipeline stages alone; cross-cutting modules need homes.
+     A module with no home is a new-repo candidate.
 7. **Extract.** Lift each module into its own standalone piece; document what it
    needed and what's missing as you go (capture before loss).
+
+## When the decomposition changes: evaluate the method
+
+Any time a **new module is found**, a module is **split further**, or a module is
+**recategorized** (including when that creates a new interface), run a full evaluation
+of this method and write a report under `docs/decomposition/evaluations/`. Cover:
+whether each core tenet was right or wrong (report either way); whether the original
+decomposition was correct and this is only more granular; whether a recategorization
+decision was made and what interface it created; why the original pass missed it; and
+the method change that turns the case into a category of action scanned for in the
+initial pass. Then apply that change here. First example:
+`docs/decomposition/evaluations/2026-10-20-two-modules-without-a-repo.md`.
 
 ## Launching the repos (project launch)
 
