@@ -15,8 +15,7 @@
     {"name": "bus", "paths": ["docs/schema/**"], "on": "write", "entry": "decision"},
     {"name": "identity", "paths": ["CHARTER.md", "CLAUDE.md", "docs/BUILD.md"], "on": "write", "entry": "decision"},
     {"name": "definition", "paths": ["decomposition.json"], "on": "write", "entry": "decision"},
-    {"name": "skills", "paths": ["skills/**", "SKILLS.md", "plugins/**/skills/**"], "on": "write", "entry": "skill"},
-    {"name": "module", "paths": ["src/**"], "on": "write", "entry": "process"},
-    {"name": "tooling", "paths": ["plugins/**"], "on": "write", "entry": "process"}
+    {"name": "skills", "paths": ["skills/**", "SKILLS.md"], "on": "write", "entry": "skill"},
+    {"name": "module", "paths": ["src/**"], "on": "write", "entry": "process"}
   ]
 }

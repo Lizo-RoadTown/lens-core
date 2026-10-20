@@ -7,5 +7,6 @@ before loss). What lives here:
 - build notes / decisions / what this repo needed and what it is missing, recorded
   as the repo builds itself out.
 
-The Lens as a whole is kept here in this repo (`docs/decomposition/`, method in `skills/decomposition/`); this folder
-is lens-core's own record.
+The decomposition of PROVES into The Lens (the method, the case records, the evaluations
+of the method, and the lens-log plugin) lives in **Surveyor** (`Lizo-RoadTown/surveyor`).
+This folder is lens-core's own record; its progress log is `log/entries/`.
