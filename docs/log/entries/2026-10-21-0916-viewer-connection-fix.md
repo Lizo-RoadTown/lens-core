@@ -10,6 +10,7 @@ source_commits:
 # proves_viewer apply script: connection failures diagnosed and fixed
 
 ## What was done
+
 - The operator ran the staged `apply_proves_viewer.py` (`!` handoff from the
   previous entry); every connection candidate failed. Probed the structure of the
   three URLs in `PROVES_LIBRARY/.env` (`PROVES_DATABASE_URL`, `DATABASE_URL`,
@@ -22,6 +23,7 @@ source_commits:
   and list both pooler ports in the credentials file it writes.
 
 ## What was found / decided
+
 - The database password contains a literal `%`. The script's pooler-fallback
   builder re-URL-encoded it (`%` → `%25`), so the one attempt that reached the
   server (port 6543) sent a corrupted password. Decided: never round-trip this
@@ -37,6 +39,7 @@ source_commits:
   retry next time.
 
 ## Lessons
+
 When a connection secret may contain URI-special characters, never reconstruct
 a URL around it — hand it to the driver as a parameter. And when one candidate
 fails at parse time and another at auth, diagnose both before rerunning: the
