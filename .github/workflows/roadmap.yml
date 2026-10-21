@@ -1,0 +1,20 @@
+name: roadmap
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install "pytest>=8.0" "pyyaml>=6.0"
+      - name: Roadmap is valid and ROADMAP.md is current
+        run: python scripts/roadmap.py check
+      - name: Tests
+        run: python -m pytest -q tests
