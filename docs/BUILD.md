@@ -77,3 +77,10 @@ Deciding factor for the entry type: it is a **decision** if it changes what this
 definition). Everything else (what was done, found, or built) is **progress**, a
 `process` entry. This file holds orientation only, so editing it is a decision.
 Also write what you needed and what is missing to loom-memory scoped to `lens-core`.
+
+## 7. The roadmap
+
+What gets built, in what order, and how firm each item is lives in
+[`ROADMAP.md`](../ROADMAP.md), generated from [`roadmap.yaml`](../roadmap.yaml). Edit the YAML,
+then run `python scripts/roadmap.py render`; `python scripts/roadmap.py check` validates it.
+Only **firm** items are built. Refer to items by id; don't copy them into memory or this file.

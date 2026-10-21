@@ -15,7 +15,7 @@ keywords = ["the-lens", "systems-observatory", "knowledge-mapping", "nearly-deco
 dependencies = []
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0"]
+dev = ["pytest>=8.0", "pyyaml>=6.0"]
 
 [project.scripts]
 lens-core = "lens_core.launch:main"
