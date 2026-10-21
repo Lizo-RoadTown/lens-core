@@ -74,10 +74,11 @@ items:
     outcome: One machine-checked roadmap everyone works from.
     horizon: now
     firmness: firm
-    status: in-progress
+    status: done
     owner: lens-core
     depends_on: [approve-observatories]
     exit_check: "python scripts/roadmap.py check"
+    evidence: [lens-core 79f1010]
 
   - id: install-lens-log-everywhere
     title: Install or update lens-log to 0.1.4 in every Lens repo
@@ -104,10 +105,11 @@ items:
     outcome: A pull request cannot leave roadmap.yaml invalid or ROADMAP.md stale.
     horizon: next
     firmness: firm
-    status: proposed
+    status: done
     owner: lens-core
     depends_on: [roadmap-as-data]
     exit_check: "CI fails on a deliberately broken roadmap.yaml"
+    evidence: [lens-core 10a8896, "CI run 39609823937 passed on main", "CI run 39609904466 failed on a deliberately broken roadmap (PR 1, closed)"]
 
   - id: lens-log-remaining-defects
     title: Fix lens-log M1, M3, M4, M5

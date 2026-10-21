@@ -10,7 +10,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
 | rotate-proves-key | Rotate the committed PROVES service_role key | The key committed in PROVES_LIBRARY scripts no longer authenticates. | operator | firm | proposed |  | human: Supabase shows the old service_role key revoked |
-| roadmap-as-data | Roadmap as data with checks | One machine-checked roadmap everyone works from. | lens-core | firm | in-progress | approve-observatories | python scripts/roadmap.py check |
 | install-lens-log-everywhere | Install or update lens-log to 0.1.4 in every Lens repo | The hooks actually run in each repo (settings alone only enable them). | operator | firm | proposed |  | human: /plugin shows lens-log 0.1.4 installed in lens-core, the four siblings and surveyor |
 | ingest-derives-plan | lens-ingest works its source and records its own plan | lens-ingest has a plan it derived from PROVES, recorded in its log. | lens-ingest | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-ingest docs/log naming its derived plan |
 | review-derives-plan | lens-review works its source and records its own plan | lens-review has a plan it derived from PROVES, recorded in its log. | lens-review | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-review docs/log naming its derived plan |
@@ -24,7 +23,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
 | log-index-action | Log-index GitHub Action | Shell edits, misses and cross-repo consistency (pieces vs the whole) are caught in CI. | lens-core | firm | proposed | siblings-under-lens-log | CI run lists entries and misses for all Lens repos and fails on a piece that disagrees with the whole |
-| roadmap-check-in-ci | Run the roadmap check in CI | A pull request cannot leave roadmap.yaml invalid or ROADMAP.md stale. | lens-core | firm | proposed | roadmap-as-data | CI fails on a deliberately broken roadmap.yaml |
 | lens-log-remaining-defects | Fix lens-log M1, M3, M4, M5 | The hook works without a 'python' on PATH, keeps state per repo, resolves paths from the working directory and never overwrites a miss. | surveyor | firm | proposed |  | python -m pytest surveyor/plugins/lens-log/tests |
 | spine-neutral-names | Neutral table names in the spine | The standard carries no PROVES table names. | lens-core | firm | proposed |  | grep finds no PROVES table names in docs/schema |
 | spine-one-table-choices | Apply the five approved one-table choices | Each kind of data (relationships, aliases, review state, groups, proposals) has one home. | lens-core | firm | proposed | spine-neutral-names | schema test asserts one table per kind |
@@ -56,3 +54,5 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | siblings-under-lens-log | Put the four sibling repos under lens-log | lens-core | done | lens-ingest 4f44a63, lens-review 98969f7, lens-serve 7019d56, lens-observe e3f5ccd |
 | lens-log-silent-loss-fixes | Fix lens-log M6, M7, M8 | surveyor | done | surveyor a984e18 |
 | module-map-check | Module-map change needs an evaluation (lens-log D11) | surveyor | done | surveyor a5910e3, lens-core 4ee947b |
+| roadmap-as-data | Roadmap as data with checks | lens-core | done | lens-core 79f1010 |
+| roadmap-check-in-ci | Run the roadmap check in CI | lens-core | done | lens-core 10a8896, CI run 39609823937 passed on main, CI run 39609904466 failed on a deliberately broken roadmap (PR 1, closed) |
