@@ -3,12 +3,11 @@
   "role": "whole",
   "module": "lens-core",
   "sources": [
-    {"name": "PROVES_LIBRARY", "repo": "Lizo-RoadTown/PROVES_LIBRARY",
-     "match": ["**/PROVES_LIBRARY/**"]},
-    {"name": "proves-curation-dashboard", "repo": "Lizo-RoadTown/proves-curation-dashboard",
-     "match": ["**/proves-curation-dashboard/**"]}
+    {"name": "PROVES_LIBRARY", "repo": "Lizo-RoadTown/PROVES_LIBRARY", "match": ["**/PROVES_LIBRARY/**"]},
+    {"name": "proves-curation-dashboard", "repo": "Lizo-RoadTown/proves-curation-dashboard", "match": ["**/proves-curation-dashboard/**"]}
   ],
   "modules": ["lens-core", "lens-ingest", "lens-review", "lens-serve", "lens-observe"],
+  "proposed": ["workflow oversight", "access + tenancy"],
   "bus": {"owner": "lens-core", "paths": ["docs/schema/**"]},
   "surfaces": [
     {"name": "source", "paths": ["@sources"], "on": "read-or-write", "entry": "process"},
@@ -16,6 +15,8 @@
     {"name": "identity", "paths": ["CHARTER.md", "CLAUDE.md", "docs/BUILD.md"], "on": "write", "entry": "decision"},
     {"name": "definition", "paths": ["decomposition.json"], "on": "write", "entry": "decision"},
     {"name": "skills", "paths": ["skills/**", "SKILLS.md"], "on": "write", "entry": "skill"},
-    {"name": "module", "paths": ["src/**"], "on": "write", "entry": "process"}
+    {"name": "module", "paths": ["src/**"], "on": "write", "entry": "process"},
+    {"name": "architecture", "paths": ["docs/architecture/**"], "on": "write", "entry": "decision"},
+    {"name": "roadmap", "paths": ["roadmap.yaml", "ROADMAP.md", "docs/plans/**"], "on": "write", "entry": "process"}
   ]
 }
