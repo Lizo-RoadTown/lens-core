@@ -8,6 +8,9 @@
   ],
   "modules": ["lens-core", "lens-ingest", "lens-review", "lens-serve", "lens-observe"],
   "proposed": ["workflow oversight", "access + tenancy"],
+  "ids": {"lens-core": "pr-001", "lens-ingest": "pr-002", "lens-review": "pr-003", "lens-serve": "pr-004",
+          "lens-observe": "pr-005", "workflow oversight": "pr-006", "access + tenancy": "pr-007"},
+  "retired_ids": {},
   "bus": {"owner": "lens-core", "paths": ["docs/schema/**"]},
   "surfaces": [
     {"name": "source", "paths": ["@sources"], "on": "read-or-write", "entry": "process"},

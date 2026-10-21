@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -27,6 +28,35 @@ BUILDING = ("in-progress", "done")
 def module_map(root: Path) -> set[str]:
     data = json.loads((Path(root) / "decomposition.json").read_text(encoding="utf-8"))
     return set(data.get("modules", [])) | set(data.get("proposed", []))
+
+
+ID_PATTERN = re.compile(r"^pr-\d{3}$")
+
+
+def check_ids(root: Path) -> list[str]:
+    """Stable program-layer IDs: once decomposition.json declares "ids", every module and
+    proposed repo needs a unique pr-NNN. IDs are never reused; a removed module's ID moves
+    to "retired_ids"."""
+    data = json.loads((Path(root) / "decomposition.json").read_text(encoding="utf-8"))
+    ids = data.get("ids")
+    if ids is None:
+        return []
+    errs: list[str] = []
+    names = set(data.get("modules", [])) | set(data.get("proposed", []))
+    errs.extend(f"module '{m}' has no pr- ID in decomposition.json 'ids'" for m in sorted(names - set(ids)))
+    errs.extend(f"'ids' names '{m}', which is not a module or proposed repo (move its ID to 'retired_ids')"
+                for m in sorted(set(ids) - names))
+    retired = list((data.get("retired_ids") or {}).values())
+    seen: dict[str, str] = {}
+    for name, cid in sorted(ids.items()):
+        if not isinstance(cid, str) or not ID_PATTERN.match(cid):
+            errs.append(f"'{name}' has ID {cid!r}; IDs must look like pr-NNN")
+        elif cid in seen:
+            errs.append(f"{cid} is used by more than one module ('{seen[cid]}', '{name}')")
+        elif cid in retired:
+            errs.append(f"{cid} is retired and cannot be reused ('{name}')")
+        seen.setdefault(cid, name)
+    return errs
 
 
 def _cycles(deps: dict[str, list[str]]) -> list[str]:
@@ -140,7 +170,7 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "render":
         md_path.write_text(render(doc), encoding="utf-8", newline="\n")
         return 0
-    errs = check(doc, module_map(root))
+    errs = check(doc, module_map(root)) + check_ids(root)
     current = md_path.read_text(encoding="utf-8") if md_path.exists() else ""
     if current.replace("\r\n", "\n") != render(doc):
         errs.append("ROADMAP.md is out of date: run python scripts/roadmap.py render")

@@ -251,10 +251,11 @@ items:
     outcome: Every Lens module and proposed repo has a stable pr- ID that cross-layer records can cite before final names exist.
     horizon: next
     firmness: firm
-    status: proposed
+    status: done
     owner: lens-core
     exit_check: "every module and proposed repo in decomposition.json has a pr- ID, and an entry records the list"
     consumers: [tapestry]
+    evidence: ["lens-core decomposition.json ids (pr-001 to pr-007), enforced by scripts/roadmap.py check_ids"]
     decision_ref: tapestry docs/plans/2026-10-21-master-plan-personal-loop.md line 29 (pr- records are owned by lens-core)
 
   - id: access-tenancy-repo

@@ -120,3 +120,24 @@ def test_cli_check_flags_stale_markdown(repo, capsys):
 def test_real_roadmap_is_valid():
     root = Path(__file__).resolve().parents[1]
     assert roadmap.main(["check", "--root", str(root)]) == 0
+
+
+def test_component_ids_must_cover_the_map_and_be_unique(repo):
+    data = dict(DEFN, ids={"lens-core": "pr-001", "lens-ingest": "pr-002"})
+    (repo / "decomposition.json").write_text(json.dumps(data), encoding="utf-8")
+    errs = roadmap.check_ids(repo)
+    assert any("access + tenancy" in e for e in errs)
+    data["ids"]["access + tenancy"] = "pr-002"
+    (repo / "decomposition.json").write_text(json.dumps(data), encoding="utf-8")
+    assert any("pr-002" in e and "more than one" in e for e in roadmap.check_ids(repo))
+    data["ids"]["access + tenancy"] = "x-3"
+    (repo / "decomposition.json").write_text(json.dumps(data), encoding="utf-8")
+    assert any("pr-NNN" in e for e in roadmap.check_ids(repo))
+    data["ids"]["access + tenancy"] = "pr-003"
+    data["ids"]["gone"] = "pr-004"
+    (repo / "decomposition.json").write_text(json.dumps(data), encoding="utf-8")
+    assert any("gone" in e for e in roadmap.check_ids(repo))
+
+
+def test_component_ids_optional_until_declared(repo):
+    assert roadmap.check_ids(repo) == []
