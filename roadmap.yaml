@@ -24,7 +24,7 @@ items:
     outcome: The key committed in PROVES_LIBRARY scripts no longer authenticates.
     horizon: now
     firmness: firm
-    status: proposed
+    status: done
     owner: operator
     exit_check: "human: Supabase shows the old service_role key revoked"
     decision_ref: surveyor docs/decomposition/proves/backend-inventory.md (security note)
