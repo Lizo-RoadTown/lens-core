@@ -1,0 +1,71 @@
+name: log-index
+
+# Rebuilds docs/log/INDEX.md from every Lens module's log (lens-log DESIGN.md 3.5).
+# Fails when a piece's decomposition.json disagrees with the whole.
+on:
+  schedule:
+    - cron: "17 6 * * *"
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: log-index
+  cancel-in-progress: false
+
+jobs:
+  index:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: Lizo-RoadTown/lens-ingest
+          path: repos/lens-ingest
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: Lizo-RoadTown/lens-review
+          path: repos/lens-review
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: Lizo-RoadTown/lens-serve
+          path: repos/lens-serve
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          repository: Lizo-RoadTown/lens-observe
+          path: repos/lens-observe
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build the index
+        id: build
+        run: |
+          set +e
+          python scripts/log_index.py --repos-dir repos
+          echo "status=$?" >> "$GITHUB_OUTPUT"
+      - name: Commit the index if it changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/log/INDEX.md
+          if git diff --cached --quiet; then
+            echo "Index unchanged."
+          else
+            git commit -m "log: rebuild INDEX.md"
+            git pull --rebase origin main
+            git push origin HEAD:main
+          fi
+      - name: Fail on consistency problems
+        if: steps.build.outputs.status != '0'
+        run: |
+          echo "A piece's decomposition.json disagrees with the whole; see the Consistency section of docs/log/INDEX.md."
+          exit 1

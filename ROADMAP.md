@@ -21,7 +21,7 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
-| log-index-action | Log-index GitHub Action | Shell edits, misses and cross-repo consistency (pieces vs the whole) are caught in CI. | lens-core | firm | proposed | siblings-under-lens-log | CI run lists entries and misses for all Lens repos and fails on a piece that disagrees with the whole |
+| log-index-action | Log-index GitHub Action | Shell edits, misses and cross-repo consistency (pieces vs the whole) are caught in CI. | lens-core | firm | in-progress | siblings-under-lens-log | CI run lists entries and misses for all Lens repos and fails on a piece that disagrees with the whole |
 | lens-log-remaining-defects | Fix lens-log M1, M3, M4, M5 | The hook works without a 'python' on PATH, keeps state per repo, resolves paths from the working directory and never overwrites a miss. | surveyor | firm | proposed |  | python -m pytest surveyor/plugins/lens-log/tests |
 | spine-neutral-names | Neutral table names in the spine | The standard carries no PROVES table names. | lens-core | firm | proposed |  | grep finds no PROVES table names in docs/schema |
 | spine-one-table-choices | Apply the five approved one-table choices | Each kind of data (relationships, aliases, review state, groups, proposals) has one home. | lens-core | firm | proposed | spine-neutral-names | schema test asserts one table per kind |

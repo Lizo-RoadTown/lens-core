@@ -95,7 +95,7 @@ items:
     outcome: Shell edits, misses and cross-repo consistency (pieces vs the whole) are caught in CI.
     horizon: next
     firmness: firm
-    status: proposed
+    status: in-progress
     owner: lens-core
     depends_on: [siblings-under-lens-log]
     exit_check: "CI run lists entries and misses for all Lens repos and fails on a piece that disagrees with the whole"
