@@ -21,7 +21,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
-| log-index-action | Log-index GitHub Action | Shell edits, misses and cross-repo consistency (pieces vs the whole) are caught in CI. | lens-core | firm | in-progress | siblings-under-lens-log | CI run lists entries and misses for all Lens repos and fails on a piece that disagrees with the whole |
 | lens-log-remaining-defects | Fix lens-log M1, M3, M4, M5 | The hook works without a 'python' on PATH, keeps state per repo, resolves paths from the working directory and never overwrites a miss. | surveyor | firm | proposed |  | python -m pytest surveyor/plugins/lens-log/tests |
 | spine-neutral-names | Neutral table names in the spine | The standard carries no PROVES table names. | lens-core | firm | proposed |  | grep finds no PROVES table names in docs/schema |
 | spine-one-table-choices | Apply the five approved one-table choices | Each kind of data (relationships, aliases, review state, groups, proposals) has one home. | lens-core | firm | proposed | spine-neutral-names | schema test asserts one table per kind |
@@ -55,5 +54,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | lens-log-silent-loss-fixes | Fix lens-log M6, M7, M8 | surveyor | done | surveyor a984e18 |
 | module-map-check | Module-map change needs an evaluation (lens-log D11) | surveyor | done | surveyor a5910e3, lens-core 4ee947b |
 | roadmap-as-data | Roadmap as data with checks | lens-core | done | lens-core 79f1010 |
+| log-index-action | Log-index GitHub Action | lens-core | done | lens-core 49e43dd, log-index run 39726154238 green; bot rebuilt INDEX.md in 3664af3, consistency failure covered by tests/test_log_index.py |
 | roadmap-check-in-ci | Run the roadmap check in CI | lens-core | done | lens-core 10a8896, CI run 39609823937 passed on main, CI run 39609904466 failed on a deliberately broken roadmap (PR 1, closed) |
 | program-layer-ids | Stable pr- component IDs for the program layer | lens-core | done | lens-core decomposition.json ids (pr-001 to pr-007), enforced by scripts/roadmap.py check_ids |
