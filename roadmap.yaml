@@ -81,13 +81,13 @@ items:
     evidence: [lens-core 79f1010]
 
   - id: install-lens-log-everywhere
-    title: Install or update lens-log to 0.1.4 in every Lens repo
+    title: Install or update lens-log to 0.1.5 in every Lens repo
     outcome: The hooks actually run in each repo (settings alone only enable them).
     horizon: now
     firmness: firm
     status: proposed
     owner: operator
-    exit_check: "human: /plugin shows lens-log 0.1.4 installed in lens-core, the four siblings and surveyor"
+    exit_check: "human: /plugin shows lens-log 0.1.5 installed in lens-core, the four siblings and surveyor"
     revisit_trigger: a session shows an older lens-log version in its hook messages
 
   - id: log-index-action
@@ -117,9 +117,10 @@ items:
     outcome: The hook works without a 'python' on PATH, keeps state per repo, resolves paths from the working directory and never overwrites a miss.
     horizon: next
     firmness: firm
-    status: proposed
+    status: done
     owner: surveyor
     exit_check: "python -m pytest surveyor/plugins/lens-log/tests"
+    evidence: [surveyor 5d1e804, "92 tests pass", lizo-skills marketplace 2a7036a]
 
   # ---------- Phase B: the shared standard v1 (lens-core) ----------
   - id: spine-neutral-names

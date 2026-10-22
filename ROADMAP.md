@@ -10,7 +10,7 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
 | rotate-proves-key | Rotate the committed PROVES service_role key | The key committed in PROVES_LIBRARY scripts no longer authenticates. | operator | firm | proposed |  | human: Supabase shows the old service_role key revoked |
-| install-lens-log-everywhere | Install or update lens-log to 0.1.4 in every Lens repo | The hooks actually run in each repo (settings alone only enable them). | operator | firm | proposed |  | human: /plugin shows lens-log 0.1.4 installed in lens-core, the four siblings and surveyor |
+| install-lens-log-everywhere | Install or update lens-log to 0.1.5 in every Lens repo | The hooks actually run in each repo (settings alone only enable them). | operator | firm | proposed |  | human: /plugin shows lens-log 0.1.5 installed in lens-core, the four siblings and surveyor |
 | ingest-derives-plan | lens-ingest works its source and records its own plan | lens-ingest has a plan it derived from PROVES, recorded in its log. | lens-ingest | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-ingest docs/log naming its derived plan |
 | review-derives-plan | lens-review works its source and records its own plan | lens-review has a plan it derived from PROVES, recorded in its log. | lens-review | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-review docs/log naming its derived plan |
 | serve-derives-plan | lens-serve works its source and records its own plan | lens-serve has a plan it derived from PROVES, recorded in its log. | lens-serve | firm | proposed | siblings-under-lens-log | a decision or process entry in lens-serve docs/log naming its derived plan |
@@ -21,7 +21,6 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 
 | id | item | outcome | owner | firmness | status | depends on | exit check / decides it |
 |---|---|---|---|---|---|---|---|
-| lens-log-remaining-defects | Fix lens-log M1, M3, M4, M5 | The hook works without a 'python' on PATH, keeps state per repo, resolves paths from the working directory and never overwrites a miss. | surveyor | firm | proposed |  | python -m pytest surveyor/plugins/lens-log/tests |
 | spine-neutral-names | Neutral table names in the spine | The standard carries no PROVES table names. | lens-core | firm | proposed |  | grep finds no PROVES table names in docs/schema |
 | spine-one-table-choices | Apply the five approved one-table choices | Each kind of data (relationships, aliases, review state, groups, proposals) has one home. | lens-core | firm | proposed | spine-neutral-names | schema test asserts one table per kind |
 | spine-scope-column | Scope column on every spine table, neutral about scale | Every row is scoped (to a project or a person) so isolation can be enforced. | lens-core | loose | proposed |  | decide when: where the personal-to-project boundary is enforced is settled (with Tapestry); must land before spine v1 |
@@ -56,4 +55,5 @@ name the fact that decides them. Method: [docs/plans/2026-10-21-roadmap-method-p
 | roadmap-as-data | Roadmap as data with checks | lens-core | done | lens-core 79f1010 |
 | log-index-action | Log-index GitHub Action | lens-core | done | lens-core 49e43dd, log-index run 39726154238 green; bot rebuilt INDEX.md in 3664af3, consistency failure covered by tests/test_log_index.py |
 | roadmap-check-in-ci | Run the roadmap check in CI | lens-core | done | lens-core 10a8896, CI run 39609823937 passed on main, CI run 39609904466 failed on a deliberately broken roadmap (PR 1, closed) |
+| lens-log-remaining-defects | Fix lens-log M1, M3, M4, M5 | surveyor | done | surveyor 5d1e804, 92 tests pass, lizo-skills marketplace 2a7036a |
 | program-layer-ids | Stable pr- component IDs for the program layer | lens-core | done | lens-core decomposition.json ids (pr-001 to pr-007), enforced by scripts/roadmap.py check_ids |
